@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View, TextInput, Pressable, Keyboard } from 'react-native';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Header from './Header';
@@ -68,7 +68,7 @@ export default function Home({ navigation }) {
                         <Text style={styles.gameinfo}>
                             Good luck, {playerName}</Text> 
                             <Pressable style={styles.button}
-                            onPress={() => navigation.navigate(Gameboard)}>   
+                            onPress={() => navigation.navigate("Gameboard", {player: playerName})}>   
                             <Text>PLAY</Text>
                             </Pressable> 
                         </>   
