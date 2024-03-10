@@ -31,21 +31,21 @@ export default function Home({ navigation }) {
         <View>
             <MaterialCommunityIcons
                 name="information"
-                size={90}
-                color="steelblue"
+                size={100}
+                color="red"
                 style={styles.information}
                 
                  
             />
             {!hasPlayerName ?
                 <>
-                    <Text style={styles.gameinfo}>For scoreboard enter your name...</Text>
+                    <Text style={styles.gameinfo}>For the scoreboard enter your name!</Text>
                     <TextInput
                         onChangeText={setPlayerName}
                         autoFocus={true}
                         style={styles.gameinfo}
                         />
-                        <Pressable style={styles.button}
+                        <Pressable style={styles.buttonOne}
                             onPress={() => handlePlayerName(playerName)}
                             >
                             <Text>OK</Text>
@@ -57,7 +57,7 @@ export default function Home({ navigation }) {
                         <Text multiline="true" style={styles.gameinfo}>
                         THE GAME: Upper section of the classic Yahtzee
                         dice game. You have {NBR_OF_DICES} dices and
-                        for the every dice you have {NBR_OF_THROWS}
+                        for the every dice you have {NBR_OF_THROWS} 
                         throws. After each throw you can keep dices in
                         order to get same dice spot counts as many as
                         possible. In the end of the turn you must select
@@ -67,7 +67,7 @@ export default function Home({ navigation }) {
                         </Text>  
                         <Text style={styles.gameinfo}>
                             Good luck, {playerName}</Text> 
-                            <Pressable style={styles.button}
+                            <Pressable style={styles.buttonOne}
                             onPress={() => navigation.navigate("Gameboard", {player: playerName})}>   
                             <Text>PLAY</Text>
                             </Pressable> 

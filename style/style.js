@@ -6,19 +6,19 @@ export default StyleSheet.create({
     backgroundColor: '#fff'
   },
   header: {
-    marginTop: 30,
+    marginTop: 25,
     marginBottom: 15,
-    backgroundColor: 'skyblue',
+    backgroundColor: 'black',
     flexDirection: 'row',
   },
   footer: {
-    marginTop: 20,
-    backgroundColor: 'skyblue',
+    marginTop: 45,
+    backgroundColor: 'black',
     flexDirection: 'row'
   },
   title: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: 'light',
     flex: 1,
     fontSize: 23,
     textAlign: 'center',
@@ -26,11 +26,11 @@ export default StyleSheet.create({
   },
   author: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: 'light',
     flex: 1,
     fontSize: 15,
     textAlign: 'center',
-    margin: 10,
+    margin: 15,
   },
   gameboard: {
     backgroundColor: '#fff',
@@ -49,18 +49,33 @@ export default StyleSheet.create({
     marginTop: 20,
     padding: 10
   },
+
   flex: {
     flexDirection: "row"
   },
-  button: {
-    margin: 30,
+  buttonOne: {
+    margin: 15,
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#73CED6",
+    backgroundColor: "red",
     width: 330,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center'
+    
+  },
+  button: {
+    margin: 5,
+    flexDirection: "row",
+    padding: 7,
+    backgroundColor: "red",
+    width: 250,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: "center",
+    
+    
     
   },
   buttonText: {
@@ -68,8 +83,40 @@ export default StyleSheet.create({
     fontSize: 20
   },
   information:{
+    marginTop: 20,
+    marginBottom: 15,
     backgroundColor: '#fff',
     textAlign: 'center',
     justifyContent: 'center',
+     
+  },
+
+  text: {
+    color:"red",
+    fontSize: 24,
+    textAlign: 'center',
+
+  },
+
+  playerName: {
+    color:"black",
+    fontSize: 16,
+    textAlign: 'center',
+    
+
+  },
+  total: {
+    color:"black",
+    fontSize: 30,
+    textAlign: 'center',
+
+  },
+  
+  endMessage: {
+    color:"black",
+    fontSize: 30,
+    textAlign: 'center',
+
   }
+  
 });

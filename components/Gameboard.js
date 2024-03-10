@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Text, View, Pressable } from 'react-native'
-import Header from './Header'
-import Footer from './Footer'
+import React, { useEffect, useState } from 'react';
+import { Text, View, Pressable } from 'react-native';
+import Header from './Header';
+import Footer from './Footer';
+import Scoreboard from './Scoreboard'; 
 import { 
   NBR_OF_DICES,
   NBR_OF_THROWS,
@@ -12,7 +13,9 @@ import {
 } from '../constants/Game';
 import { Container, Row, Col} from "react-native-flex-grid"
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
+import { FontAwesome6 } from '@expo/vector-icons';
 import styles from '../style/style'
+
 
 let board = [];
 
@@ -21,6 +24,7 @@ export default function Gameboard({ navigation, route }) {
  const [nbrOfThrowsLeft, setNbrOfThrowsLeft] = useState(NBR_OF_THROWS);
  const [status, setStatus] = useState("Throw dices");
  const [gameEndStatus, setGameEndStatus] = useState(false);
+ const [lastScores, setLastScores] = useState([]);
  
  const [selectedDices, setSelectedDices] =
    useState(new Array(NBR_OF_DICES).fill(false));
@@ -33,11 +37,20 @@ export default function Gameboard({ navigation, route }) {
 
   const [playerName, setPlayerName] = useState("");
 
+
   useEffect(() => {
     if (playerName === "" && route.params?.player) {
       setPlayerName(route.params.player);
     }
-  }, []);
+  }, [playerName]);
+
+  
+
+  useEffect(() => {
+    if (gameEndStatus) {
+      setLastScores(prevScores => [totalScore, ...prevScores.slice(0, 2)]);
+    }
+  }, [gameEndStatus, totalScore]);
 
   const row = [];
   for (let dice = 0; dice < NBR_OF_DICES; dice++) {
@@ -68,6 +81,7 @@ export default function Gameboard({ navigation, route }) {
     )
   }
 
+  const [totalScore, setTotalScore] = useState(0);
 
   const pointsToSelectRow = [];
   for (let diceButton = 0; diceButton < MAX_SPOT; diceButton++) {
@@ -85,9 +99,13 @@ export default function Gameboard({ navigation, route }) {
   }
 
   const selectDice = (i) => {
-    let dices = [...selectedDices];
-    dices[i] = selectedDices[i] ? false : true;
-    setSelectedDices(dices);
+    if (nbrOfThrowsLeft < 3) {
+      let dices = [...selectedDices];
+      dices[i] = !selectedDices[i]; 
+      setSelectedDices(dices);
+    } else { 
+      setSelectedDices(new Array(NBR_OF_DICES).fill(false));
+    }
   }
 
   function getDiceColor(i) {
@@ -98,32 +116,44 @@ export default function Gameboard({ navigation, route }) {
     return selectedDicePoints[i] ? "black" : "red"
   }
 
+
+
+  
   const selectDicePoints = (i) => {
     if (nbrOfThrowsLeft === 0) {
-      let selected = [...selectedDices];
+      // Reset selection of all dices
+      setSelectedDices(new Array(NBR_OF_DICES).fill(false));
+  
       let selectedPoints = [...selectedDicePoints];
       let points = [...dicePointsTotal];
-      if(!selectedPoints[i]) {
+      if (!selectedPoints[i]) {
         selectedPoints[i] = true;
-        let nbrOfDices =
-        diceSpots.reduce(
-          (total, x) => (x === (i + 1) ? total + 1 : total), 0);
-          points[i] = nbrOfDices * (i + 1);
-          setDicePointsTotal(points);
-          setSelectedDicePoints(selectedPoints);
-          setNbrOfThrowsLeft(NBR_OF_THROWS);
-          return points[i];
+        let nbrOfDices = diceSpots.reduce(
+          (total, x) => (x === (i + 1) ? total + 1 : total), 0
+        );
+        points[i] = nbrOfDices * (i + 1);
+        setDicePointsTotal(points);
+        setSelectedDicePoints(selectedPoints);
+        setNbrOfThrowsLeft(NBR_OF_THROWS);
+        const categoryPoints = points[i];
+        setTotalScore(totalScore + categoryPoints);
+        
+        const allPointsSelected = selectedPoints.every(point => point);
+        if (allPointsSelected) {
+          setGameEndStatus(true);
         }
-        else {
-          setStatus("You already selected points for " + (i + 1) + " !" );
-        }
+        
+        return points[i];
+      } else {
+        setStatus("You already selected points for " + (i + 1) + " !");
       }
-      else {
-        setStatus("Throw " + NBR_OF_THROWS + " times before setting points!")
-      }
-  }
+    } else {
+      setStatus("Throw " + NBR_OF_THROWS + " times before setting points!");
+    }
+  };
 
-  const throwDices = () => {
+
+  function throwDices() {
     let spots = [...diceSpots];
     if (nbrOfThrowsLeft > 0) {
       for (let i = 0; i < NBR_OF_DICES; i++) {
@@ -152,32 +182,47 @@ export default function Gameboard({ navigation, route }) {
     setDicePointsTotal(new Array(MAX_SPOT).fill(0));
     setPlayerName("");
     board = [];
+     setTotalScore(0);
   };
 
   return (
     <>
       <Header />
       <View>
-        <Container>
-          <Row>{row}</Row>
-        </Container>
-        <Text>Throws left: {nbrOfThrowsLeft}</Text>
-        <Text>{status}</Text>
-        <Pressable onPress={() => throwDices()}>
-          <Text>THROW DICES</Text>
-        </Pressable>
-        <Pressable onPress={() => resetGame()}>
-          <Text>START A NEW GAME</Text>
-        </Pressable>
-        <Container>
-          <Row>{pointsRow}</Row>
-        </Container>
-        <Container>
-          <Row>{pointsToSelectRow}</Row>
-        </Container>
-        <Text>Player name: {playerName}</Text>
-      </View>
+  {gameEndStatus ? (
+    <Text style={styles.endMessage}>Congratulations, you got {totalScore} points!</Text>
+  ) : (
+    <Text style={styles.total}>Total Score: {totalScore}</Text>
+  )}
+
+  <FontAwesome6 
+    name="dice" 
+    size={72} 
+    color="black" 
+    style={styles.information} 
+  />
+
+  <Container>
+    <Row>{row}</Row>
+  </Container>
+  <Text style={styles.text}>Throws left: {nbrOfThrowsLeft} </Text> 
+  <Pressable style={styles.button} onPress={() => throwDices()}>
+    <Text>THROW DICES</Text>
+  </Pressable>
+  <Pressable style={styles.button} onPress={() => resetGame()}>
+    <Text>START A NEW GAME</Text>
+  </Pressable>
+  <Container>
+    <Row>{pointsRow}</Row>
+  </Container>
+  <Container>
+    <Row>{pointsToSelectRow}</Row>
+  </Container>
+  <Text style={styles.playerName}>{status}</Text>
+  <Text style={styles.playerName}>Player name: {playerName}</Text>
+  {gameEndStatus && <Scoreboard scores={lastScores} />}
+  <Scoreboard gameEndStatus={gameEndStatus} lastScores={lastScores} />
+</View>
       <Footer />
     </>
-  );
-}
+  )}
